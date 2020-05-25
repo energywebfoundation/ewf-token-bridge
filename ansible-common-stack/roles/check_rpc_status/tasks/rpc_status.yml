@@ -1,0 +1,27 @@
+---
+- name: Show container status
+  shell: docker-compose ps
+  register: docker_compose_ps
+  args:
+    chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
+
+- debug:
+    var: docker_compose_ps.stdout_lines
+
+- name: Show logs EWC Parity
+  shell: docker-compose logs --tail {{ docker_parity_lines_to_show }} parity_ewc
+  register: parity_ewc_logs
+  args:
+    chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
+
+- debug:
+    var: parity_ewc_logs.stdout_lines
+
+- name: Show logs Mainnet Parity
+  shell: docker-compose logs --tail {{ docker_parity_lines_to_show }} parity_mainnet
+  register: parity_mainnet_logs
+  args:
+    chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
+
+- debug:
+    var: parity_mainnet_logs.stdout_lines

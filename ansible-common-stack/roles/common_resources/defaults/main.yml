@@ -1,0 +1,13 @@
+---
+self_signed_certs:
+  - key: "{{ common_docker_stack_location }}/resources-docker-stack/nginx/nginx.key"
+    cert: "{{ common_docker_stack_location }}/resources-docker-stack/nginx/nginx.crt"
+compose_service_user: ubuntu
+ansible_user: ubuntu
+common_docker_stack_location: /bridge-data
+ewc_parity_data_location: /parity-ewc/
+ethereum_parity_data_location: /parity-main/
+ewc_chainspec_url: "https://raw.githubusercontent.com/energywebfoundation/ewf-chainspec/master/EnergyWebChain.json"
+check_rpc_status_only: false
+GASPRICE_FOREIGN_RPC_URL: 
+GASPRICE_HOME_RPC_URL: 

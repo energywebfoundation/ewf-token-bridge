@@ -1,0 +1,6 @@
+---
+dependencies:
+  - {
+      role: dependencies,
+      when: check_rpc_status_only != true
+    }

@@ -1,0 +1,6 @@
+---
+- name: RPC Status
+  include_tasks: rpc_status.yml
+  when: check_rpc_status_only == true
+
+

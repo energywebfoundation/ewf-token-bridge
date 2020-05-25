@@ -1,0 +1,10 @@
+---
+compose_service_user: ubuntu
+ansible_user: ubuntu
+# These directories have to exists !
+common_docker_stack_location: /bridge-data
+ewc_parity_data_location: /parity-ewc/
+ethereum_parity_data_location: /parity-main/
+
+# Uncomment to check only rpc status instead of instaling anything
+# check_rpc_status_only: true

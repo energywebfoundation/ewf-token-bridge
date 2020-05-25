@@ -1,0 +1,49 @@
+---
+- name: Copy docker resources stack
+  copy:
+    src: "../../../../resources-docker-stack"
+    dest: "{{ common_docker_stack_location }}/"
+    owner: "{{ compose_service_user }}"
+    group: "{{ compose_service_user }}"
+    mode: '0755'
+
+- name: "Prepare docker-compose file"
+  template:
+    src: docker-compose.yaml.j2
+    dest: "{{ common_docker_stack_location }}/resources-docker-stack/docker-compose.yaml"
+    owner: "{{ compose_service_user }}"
+    group: "{{ compose_service_user }}"
+    mode: '0755'
+
+- name: Pull the containers images
+  shell: docker-compose pull
+  args:
+    chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
+
+- name: Create self-signed certificates
+  command: >
+    openssl req -x509 -nodes -subj '/CN={{ ansible_fqdn }}' -days 3650
+    -newkey rsa:4096 -sha256 -keyout {{ item.key }} -out {{ item.cert }}
+    creates={{ item.cert }}
+  with_items: "{{ self_signed_certs }}"
+
+- name: Change certificate ownership
+  file:
+    path: "{{ item.cert }}"
+    owner: "{{ compose_service_user }}"
+    group: "{{ compose_service_user }}"
+  with_items: "{{ self_signed_certs }}"
+
+- name: Change certificate key ownership
+  file:
+    path: "{{ item.key }}"
+    owner: "{{ compose_service_user }}"
+    group: "{{ compose_service_user }}"
+  with_items: "{{ self_signed_certs }}"
+
+- name: Download EWC Chainspec file
+  get_url:
+    url: "{{ ewc_chainspec_url }}"
+    dest: "{{ ewc_parity_data_location }}/EnergyWebChain.json"
+    owner: "{{ compose_service_user }}"
+    group: "{{ compose_service_user }}"

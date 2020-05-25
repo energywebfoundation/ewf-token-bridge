@@ -1,0 +1,4 @@
+---
+- name: Include dependencies tasks
+  include_tasks: dependencies.yml
+

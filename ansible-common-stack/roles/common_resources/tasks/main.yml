@@ -1,0 +1,9 @@
+---
+- include_tasks: pre_config.yml
+  when: check_rpc_status_only != true
+
+- name: Include RPC task
+  include_tasks: rpc.yml
+  when: check_rpc_status_only != true
+
+

@@ -1,0 +1,12 @@
+---
+- name: RPC Stack & NGINX Proxy 
+  hosts: all
+  become: true
+  roles:
+    - { role: common_resources }
+
+- name: RPC Status check
+  hosts: all
+  become: true
+  roles:
+    - { role: check_rpc_status }

@@ -1,0 +1,40 @@
+---
+- name: Start EWC Parity
+  shell: docker-compose up -d --force-recreate parity_ewc
+  register: parity_ewc_start
+  args:
+    chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
+
+- debug: 
+    var: parity_ewc_start.stdout_lines
+
+- name: Start Mainnet Parity
+  shell: docker-compose up -d --force-recreate parity_mainnet
+  register: parity_mainnet_start
+  args:
+    chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
+
+- debug:
+    var: parity_mainnet.stdout_lines
+
+- pause:
+    prompt: "Starting RPC services for EWC and Mainnet"
+    seconds: 30
+
+- name: Show logs EWC Parity
+  shell: docker-compose logs parity_ewc
+  register: parity_ewc_logs
+  args:
+    chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
+
+- debug:
+    var: parity_ewc_logs.stdout_lines
+
+- name: Show logs Mainnet Parity
+  shell: docker-compose logs parity_mainnet
+  register: parity_mainnet_logs
+  args:
+    chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
+
+- debug:
+    var: parity_mainnet_logs.stdout_lines

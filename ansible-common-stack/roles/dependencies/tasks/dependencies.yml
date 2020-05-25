@@ -1,0 +1,60 @@
+---
+- name: Install aptitude using apt
+  apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+- name: Install required system packages
+  apt: name={{ item }} state=latest update_cache=yes
+  loop:
+    [
+      "apt-transport-https",
+      "ca-certificates",
+      "curl",
+      "software-properties-common",
+      "python3-pip",
+      "virtualenv",
+      "python3-setuptools",
+    ]
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt: update_cache=yes name=docker-ce state=latest
+
+- name: Install Docker Compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+    dest: "/usr/local/bin/docker-compose"
+    force: True
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Add user to run docker-compose
+  user:
+    name: "{{ compose_service_user }}"
+    comment: user to run docker-compose
+    group: docker
+    createhome: yes
+
+- name: Configure docker engine
+  copy:
+    src: daemon.json
+    dest: /etc/docker/
+    owner: root
+    group: root
+    mode: 0640
+  notify: restart docker
+
+- name: Add common docker network for communication between containers
+  shell: docker network create -d bridge bridge-common-network || true
+
+- name: Add common docker network for communication between containers - This one is for connection between dai & docker stack which we use
+  shell: docker network create -d bridge dai-bridge-common-network || true

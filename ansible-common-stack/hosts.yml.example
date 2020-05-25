@@ -1,0 +1,6 @@
+---
+ewc_bridge:
+  children:
+    common_resources:
+      hosts:
+        192.168.64.56:

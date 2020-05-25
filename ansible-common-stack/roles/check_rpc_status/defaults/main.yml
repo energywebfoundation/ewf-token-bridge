@@ -1,0 +1,8 @@
+---
+compose_service_user: ubuntu
+ansible_user: ubuntu
+common_docker_stack_location: /bridge-data
+ewc_parity_data_location: /parity-ewc/
+ethereum_parity_data_location: /parity-main/
+docker_parity_lines_to_show: 30
+check_rpc_status_only: false
