@@ -1,0 +1,13 @@
+---
+- name: Check if component is already deployed
+  shell: "test -f {{ bridge_path }}/{{ component }}/.env && echo 'true'"
+  ignore_errors: True
+  register: already_deployed
+  when: check_deployed is defined
+
+- name: Set if tasks should be skipped
+  set_fact: skip_task="{{ already_deployed.stdout | default('false') }}"
+
+- name: Include repo tasks
+  include_tasks: repo.yml
+  when: skip_task != true and skip_repo is undefined

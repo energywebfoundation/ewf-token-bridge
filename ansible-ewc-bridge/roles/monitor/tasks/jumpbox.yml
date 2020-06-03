@@ -1,0 +1,5 @@
+---
+- name: Pull the containers images
+  shell: docker-compose pull
+  args:
+    chdir: "{{ bridge_path }}/monitor"

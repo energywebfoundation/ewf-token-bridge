@@ -1,0 +1,3 @@
+---
+compose_service_user: ubuntu
+bridge_path: "/home/{{ compose_service_user }}/bridge"

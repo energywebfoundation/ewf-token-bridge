@@ -15,7 +15,7 @@
     chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
 
 - debug:
-    var: parity_mainnet.stdout_lines
+    var: parity_mainnet_start.stdout_lines
 
 - pause:
     prompt: "Starting RPC services for EWC and Mainnet"
@@ -38,3 +38,20 @@
 
 - debug:
     var: parity_mainnet_logs.stdout_lines
+
+- name: Start whole composition
+  shell: docker-compose up -d
+  args:
+    chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
+  when: start_all_resources == true
+
+- name: Check container status
+  shell: docker-compose ps
+  args:
+    chdir: "{{ common_docker_stack_location }}/resources-docker-stack"
+  register: container_status
+  when: start_all_resources == true
+
+- debug:
+    var: container_status.stdout_lines
+  when: start_all_resources == true

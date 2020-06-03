@@ -9,5 +9,13 @@ ewc_parity_data_location: /parity-ewc/
 ethereum_parity_data_location: /parity-main/
 ewc_chainspec_url: "https://raw.githubusercontent.com/energywebfoundation/ewf-chainspec/master/EnergyWebChain.json"
 check_rpc_status_only: false
-GASPRICE_FOREIGN_RPC_URL: 
-GASPRICE_HOME_RPC_URL: 
+start_all_resources: false
+GASPRICE_FOREIGN_RPC_URL: http://parity_mainnet:8545
+GASPRICE_HOME_RPC_URL: http://parity_ewc:8545
+bridge_main_domain: bridge.example.com
+bridge_main_monitor_expose: false
+bridge_main_monitor_domain: bridge-monitor.example.com
+bridge_dai_domain_enable: false
+bridge_dai_domain: bridge-dai.example.com
+bridge_main_dai_monitor_expose: false
+bridge_dai_monitor_domain: bridge-dai-monitor.example.com

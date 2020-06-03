@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: common, component: "oracle", check_deployed: true }

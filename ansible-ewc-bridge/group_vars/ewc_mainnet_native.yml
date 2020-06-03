@@ -1,0 +1,85 @@
+---
+compose_service_user: ubuntu
+#This variable is required for multibridge setup
+bridge_prefix: ewc
+bridge_path: /bridge-data/bridge-ewc
+# Persistent data directory
+bridge_data: /bridge-data/bridge-ewc-data
+
+# Bridge external network for traffic forwarding via nginx
+BRIDGE_EXTERNAL_NETWORK: bridge-common-network
+
+## Secrets
+ORACLE_VALIDATOR_ADDRESS: "INSERT_ADDRESS_HERE"
+ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY: "INSERT_PRIV_KEY_HERE"
+
+# This has to be unique path for every bridge
+keyfile_path: "/root/.key"
+## General settings
+ORACLE_BRIDGE_MODE: "NATIVE_TO_ERC"
+UI_NATIVE_TOKEN_DISPLAY_NAME: "EWT"
+ORACLE_LOG_LEVEL: debug
+ALLOW_HTTP: "yes"
+LOG_LEVEL: debug
+MAX_PROCESSING_TIME: 30000
+
+## Home contract
+
+# Provide URL to home RPC installed during first phase. Nginx configuration will use default host attached to this instance IP
+# This address have to be publicly available
+COMMON_HOME_RPC_URL: "https://bridge-common.example.com/home_rpc"
+UI_HOME_NETWORK_DISPLAY_NAME: "Energy Web Chain"
+UI_HOME_WITHOUT_EVENTS: false
+COMMON_HOME_BRIDGE_ADDRESS: "0xb838a6e42251096D890Af680336555130A60A303"
+ORACLE_HOME_RPC_POLLING_INTERVAL: 4900
+ORACLE_HOME_START_BLOCK: 5027094
+
+## Foreign contract
+
+# Provide URL to RPC foreign installed during first phase.
+# This address have to be publicly available
+COMMON_FOREIGN_RPC_URL: "https://bridge-common.example.com/foreign_rpc"
+UI_FOREIGN_NETWORK_DISPLAY_NAME: "Ethereum mainnet"
+UI_FOREIGN_WITHOUT_EVENTS: false
+COMMON_FOREIGN_BRIDGE_ADDRESS: "0x6773EAB40Aa22459CF8401aFb57447df5c6E518c"
+ORACLE_FOREIGN_RPC_POLLING_INTERVAL: 10000
+ORACLE_FOREIGN_START_BLOCK: 9817851
+
+## Home Gasprice
+
+# Provide URL to home gasprice service installed during first phase. Nginx configuration will use default host attached to this instance IP
+# This address have to be publicly available
+COMMON_HOME_GAS_PRICE_SUPPLIER_URL: "https://bridge-common.example.com/home_gasprice"
+COMMON_HOME_GAS_PRICE_SPEED_TYPE: "standard"
+COMMON_HOME_GAS_PRICE_FALLBACK: 1000000000      # in wei
+ORACLE_HOME_GAS_PRICE_UPDATE_INTERVAL: 600000
+COMMON_HOME_GAS_PRICE_FACTOR: 1
+
+## Foreign Gasprice
+COMMON_FOREIGN_GAS_PRICE_SUPPLIER_URL: "https://bridge-common.example.com/foreign_gasprice"
+COMMON_FOREIGN_GAS_PRICE_SPEED_TYPE: "standard"
+COMMON_FOREIGN_GAS_PRICE_FALLBACK: 5000000000   # in wei
+ORACLE_FOREIGN_GAS_PRICE_UPDATE_INTERVAL: 600000
+COMMON_FOREIGN_GAS_PRICE_FACTOR: 1
+
+## UI
+UI_TITLE: "Energyweb TokenBridge UI app - %c"
+UI_DESCRIPTION: "The TokenBridge serves as a method of transferring native tokens from the Energy Web Chain to the Ethereum mainnet in a quick and cost-efficient manner."
+UI_PORT: 3000
+
+UI_HOME_EXPLORER_TX_TEMPLATE: https://explorer.energyweb.org/tx/%s
+UI_HOME_EXPLORER_ADDRESS_TEMPLATE: https://explorer.energyweb.org/address/%s
+UI_HOME_GAS_PRICE_UPDATE_INTERVAL: 300000
+
+UI_FOREIGN_EXPLORER_TX_TEMPLATE: https://etherscan.io/tx/%s
+UI_FOREIGN_EXPLORER_ADDRESS_TEMPLATE: https://etherscan.io/address/%s
+UI_FOREIGN_GAS_PRICE_UPDATE_INTERVAL: 300000
+
+## Monitor
+MONITOR_BRIDGE_NAME: "ewc-mainnet-native"
+MONITOR_PORT: 3010
+MONITOR_HOME_START_BLOCK: 5027094
+MONITOR_FOREIGN_START_BLOCK: 9817851
+MONITOR_VALIDATOR_HOME_TX_LIMIT: 300000
+MONITOR_VALIDATOR_FOREIGN_TX_LIMIT: 300000
+MONITOR_TX_NUMBER_THRESHOLD: 100

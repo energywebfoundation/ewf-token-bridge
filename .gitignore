@@ -1,2 +1,4 @@
 .env
 hosts-ewc.yml
+hosts-aws.yml
+bridge_repo

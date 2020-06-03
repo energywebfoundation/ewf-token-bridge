@@ -1,0 +1,14 @@
+---
+- include_tasks: pre_config.yml
+
+- name: Include jumpbox tasks
+  include_tasks: jumpbox.yml
+  when: skip_task != true
+
+- name: Include servinstall tasks
+  include_tasks: servinstall.yml
+  when: skip_task != true
+
+- name: Include cron tasks
+  include_tasks: cron.yml
+  when: skip_task != true

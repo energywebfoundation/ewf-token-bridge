@@ -1,0 +1,126 @@
+---
+version: '2.4'
+services:
+  rabbit:
+    cpus: 0.3
+    mem_limit: 500m
+    environment: ['RABBITMQ_NODENAME=node@rabbit']
+    hostname: rabbit
+    image: rabbitmq:3
+    networks:
+      - net_rabbit_bridge_request
+      - net_rabbit_bridge_collected
+      - net_rabbit_bridge_affirmation
+      - net_rabbit_bridge_senderhome
+      - net_rabbit_bridge_senderforeign
+    restart: unless-stopped
+    volumes: ['${RABBIT_DATA}:/var/lib/rabbitmq/mnesia']
+  redis:
+    cpus: 0.1
+    mem_limit: 500m
+    command: [redis-server, --appendonly, 'yes']
+    hostname: redis
+    image: redis:4
+    networks:    
+      - net_db_bridge_request
+      - net_db_bridge_collected
+      - net_db_bridge_affirmation
+      - net_db_bridge_senderhome
+      - net_db_bridge_senderforeign
+    restart: unless-stopped
+    volumes: ['${REDIS_DATA}:/data']
+  bridge_request:
+    cpus: 0.1
+    mem_limit: 500m
+    image: poanetwork/tokenbridge-oracle:1.2.0
+    env_file: ./.env
+    environment: 
+      - NODE_ENV=production 
+      - ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY=${ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY}
+    restart: unless-stopped
+    entrypoint: yarn watcher:signature-request
+    networks:
+      - net_db_bridge_request
+      - net_rabbit_bridge_request
+      - net_rpc_external
+  bridge_collected:
+    cpus: 0.1
+    mem_limit: 500m
+    image: poanetwork/tokenbridge-oracle:1.2.0
+    env_file: ./.env
+    environment: 
+      - NODE_ENV=production 
+      - ORACLE_VALIDATOR_ADDRESS=${ORACLE_VALIDATOR_ADDRESS}
+    restart: unless-stopped
+    entrypoint: yarn watcher:collected-signatures
+    networks:
+      - net_db_bridge_collected
+      - net_rabbit_bridge_collected
+      - net_rpc_external
+  bridge_affirmation:
+    cpus: 0.1
+    mem_limit: 500m
+    image: poanetwork/tokenbridge-oracle:1.2.0
+    env_file: ./.env
+    environment: 
+      - NODE_ENV=production 
+      - ORACLE_VALIDATOR_ADDRESS=${ORACLE_VALIDATOR_ADDRESS}
+    restart: unless-stopped
+    entrypoint: yarn watcher:affirmation-request
+    networks:
+      - net_db_bridge_affirmation
+      - net_rabbit_bridge_affirmation
+      - net_rpc_external
+  bridge_senderhome:
+    cpus: 0.1
+    mem_limit: 500m
+    image: poanetwork/tokenbridge-oracle:1.2.0
+    env_file: ./.env
+    environment: 
+      - NODE_ENV=production 
+      - ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY=${ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY}
+    restart: unless-stopped
+    entrypoint: yarn sender:home
+    networks:
+      - net_db_bridge_senderhome
+      - net_rabbit_bridge_senderhome
+      - net_rpc_external
+  bridge_senderforeign:
+    cpus: 0.1
+    mem_limit: 500m
+    image: poanetwork/tokenbridge-oracle:1.2.0
+    env_file: ./.env
+    environment: 
+      - NODE_ENV=production 
+      - ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY=${ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY}
+    restart: unless-stopped
+    entrypoint: yarn sender:foreign
+    networks:
+      - net_db_bridge_senderforeign
+      - net_rabbit_bridge_senderforeign
+      - net_rpc_external
+
+networks:
+  net_db_bridge_request:
+    driver: bridge
+  net_db_bridge_collected:
+    driver: bridge
+  net_db_bridge_affirmation:
+    driver: bridge
+  net_db_bridge_senderhome:
+    driver: bridge
+  net_db_bridge_senderforeign:
+    driver: bridge
+  net_rabbit_bridge_request:
+    driver: bridge
+  net_rabbit_bridge_collected:
+    driver: bridge
+  net_rabbit_bridge_affirmation:
+    driver: bridge
+  net_rabbit_bridge_senderhome:
+    driver: bridge
+  net_rabbit_bridge_senderforeign:
+    driver: bridge
+  net_rpc_external:
+    external:
+      name: ${BRIDGE_EXTERNAL_NETWORK}

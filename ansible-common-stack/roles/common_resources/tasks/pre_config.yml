@@ -1,8 +1,19 @@
 ---
-- name: Copy docker resources stack
-  copy:
-    src: "../../../../resources-docker-stack"
-    dest: "{{ common_docker_stack_location }}/"
+- name: Create docker stack directories
+  file:
+    path: "{{ common_docker_stack_location }}/{{ item }}"
+    state: directory
+    owner: "{{ compose_service_user }}"
+    group: "{{ compose_service_user }}"
+    mode: '0755'
+  with_items:
+    - resources-docker-stack
+    - resources-docker-stack/nginx
+
+- name: "Prepare nginx configuration file"
+  template:
+    src: default.conf.j2
+    dest: "{{ common_docker_stack_location }}/resources-docker-stack/nginx/default.conf"
     owner: "{{ compose_service_user }}"
     group: "{{ compose_service_user }}"
     mode: '0755'
@@ -11,6 +22,14 @@
   template:
     src: docker-compose.yaml.j2
     dest: "{{ common_docker_stack_location }}/resources-docker-stack/docker-compose.yaml"
+    owner: "{{ compose_service_user }}"
+    group: "{{ compose_service_user }}"
+    mode: '0755'
+
+- name: "Prepare .env file"
+  template:
+    src: .env.j2
+    dest: "{{ common_docker_stack_location }}/resources-docker-stack/.env"
     owner: "{{ compose_service_user }}"
     group: "{{ compose_service_user }}"
     mode: '0755'

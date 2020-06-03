@@ -6,5 +6,20 @@ common_docker_stack_location: /bridge-data
 ewc_parity_data_location: /parity-ewc/
 ethereum_parity_data_location: /parity-main/
 
+##############################
+## nginx server_name domains
+##############################
+
+bridge_main_domain: bridge.example.com
+
+bridge_dai_domain_enable: false
+bridge_dai_domain: bridge-dai.example.com
+
+bridge_main_monitor_expose: true
+bridge_main_monitor_domain: bridge-monitor.example.com
+
 # Uncomment to check only rpc status instead of instaling anything
 # check_rpc_status_only: true
+
+# This one will run all docker resources like nginx proxy and gasprice services
+start_all_resources: true

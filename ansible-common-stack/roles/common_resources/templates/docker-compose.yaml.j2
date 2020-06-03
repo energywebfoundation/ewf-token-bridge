@@ -36,7 +36,7 @@ services:
         source: {{ ethereum_parity_data_location }}
         target: /data
     restart: unless-stopped
-    mem_limit: 8G
+    mem_limit: 6G
     mem_reservation: 16M
     oom_kill_disable: true
     stop_grace_period: 1m
@@ -81,7 +81,7 @@ services:
         source: {{ ewc_parity_data_location }}
         target: /data
     restart: unless-stopped
-    mem_limit: 12G
+    mem_limit: 6G
     mem_reservation: 16M
     stop_grace_period: 1m
     ports:
@@ -91,6 +91,7 @@ services:
       - dai_net_rpc_external
   nginx:
     image: nginx
+    restart: unless-stopped
     volumes:
       - type: bind
         source: ./nginx
@@ -112,7 +113,6 @@ services:
       - net_rpc_external
   gasprice_foreign:
     image: poanetwork/gasprice:latest
-    env_file: ./.env
     environment:
       - ETH_RPC_URL=${GASPRICE_FOREIGN_RPC_URL}
     restart: unless-stopped

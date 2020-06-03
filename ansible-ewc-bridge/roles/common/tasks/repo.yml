@@ -1,0 +1,57 @@
+---
+- name: Prepare bridge repository
+  local_action: 
+    module: git
+    repo: 'git@github.com:energywebfoundation/tokenbridge.git'
+    dest: ../bridge_repo
+    accept_hostkey: yes
+    version: dev/ewf_bridges
+  become: false
+
+- name: Remove default hooked contracts repository
+  local_action:
+    module: file
+    state: absent
+    path: ../bridge_repo/contracts
+  become: false
+
+- name: Prepare contracts repository
+  local_action: 
+    module: git
+    repo: 'git@github.com:poanetwork/tokenbridge-contracts.git'
+    dest: ../bridge_repo/contracts
+    accept_hostkey: yes
+    version: 3.3.0
+  become: false
+
+- name: Create archives of the monorepository
+  shell: |
+    (git ls-tree -r HEAD --name-only | sed '/^contracts$/d') | xargs tar zcfv monorepo.tar.gz --files-from -
+    cd contracts; (git ls-tree -r HEAD --name-only) | xargs tar zcfv ../contracts.tar.gz --files-from -
+  delegate_to: 127.0.0.1
+  become: false
+  args:
+    chdir: ../bridge_repo
+
+- name: Copy the archives
+  copy:
+    src: ../bridge_repo/{{ item }}
+    dest: "{{ bridge_path }}/"
+  with_items:
+    - monorepo.tar.gz
+    - contracts.tar.gz
+
+- name: Untar the archives
+  shell: |
+    tar zxfv monorepo.tar.gz && rm monorepo.tar.gz
+    mkdir -p contracts && tar zxfv contracts.tar.gz -C ./contracts && rm contracts.tar.gz
+  args:
+    chdir: "{{ bridge_path }}"
+    warn: false
+
+- name: Remove local repositories
+  local_action:
+    module: file
+    state: absent
+    path: ../bridge_repo
+  become: false

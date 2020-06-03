@@ -17,18 +17,18 @@ server {
   }
   location /foreign_gasprice {
     add_header 'Access-Control-Allow-Origin' '*';
-    proxy_pass http://gasprice_foreign.bridge-common-network:8080/;
+    proxy_pass http://gasprice_foreign:8000/;
   }
   location /home_gasprice {
     add_header 'Access-Control-Allow-Origin' '*';
-    proxy_pass http://gasprice_home.bridge-common-network:8080/;
+    proxy_pass http://gasprice_home:8000/;
   }
 }
 server {
   listen 443 ssl;
   ssl_certificate /etc/nginx/conf.d/nginx.crt;
   ssl_certificate_key /etc/nginx/conf.d/nginx.key;
-  server_name bridge.energyweb.org;
+  server_name {{ bridge_main_domain }};
   location / {
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -36,11 +36,12 @@ server {
     proxy_pass http://ui.bridge-common-network:3000/;
   }
 }
+{% if bridge_main_monitor_expose | default(false) == true %}
 server {
   listen 443 ssl;
   ssl_certificate /etc/nginx/conf.d/nginx.crt;
   ssl_certificate_key /etc/nginx/conf.d/nginx.key;
-  server_name bridge-monitor.energyweb.org;
+  server_name {{ bridge_main_monitor_domain }};
   location / {
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -48,11 +49,13 @@ server {
     proxy_pass http://monitor.bridge-common-network:3010/;
   }
 }
+{% endif %}
+{% if bridge_dai_domain_enable | default(false) == true %}
 server {
   listen 443 ssl;
   ssl_certificate /etc/nginx/conf.d/nginx.crt;
   ssl_certificate_key /etc/nginx/conf.d/nginx.key;
-  server_name dai-bridge.energyweb.org;
+  server_name {{ bridge_dai_domain }};
   location / {
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -60,11 +63,13 @@ server {
     proxy_pass http://ui.dai-bridge-common-network:3001/;
   }
 }
+{% endif %}
+{% if bridge_main_dai_monitor_expose | default(false) == true %}
 server {
   listen 443 ssl;
   ssl_certificate /etc/nginx/conf.d/nginx.crt;
   ssl_certificate_key /etc/nginx/conf.d/nginx.key;
-  server_name bridge-dai-monitor.energyweb.org;
+  server_name {{ bridge_dai_monitor_domain }};
   location / {
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -72,3 +77,4 @@ server {
     proxy_pass http://monitor.dai-bridge-common-network:3011/;
   }
 }
+{% endif %}

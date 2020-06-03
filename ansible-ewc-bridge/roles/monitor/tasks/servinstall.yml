@@ -1,0 +1,19 @@
+# This role creates a tokenbridge-monitor service which is designed to manage docker-compose monitor deployment.
+# /etc/init.d/tokenbridge-monitor start, status, stop, restart - does what the services usually do in such cases.
+---
+- name: "Set the service"
+  template:
+    src: tokenbridge-monitor.j2
+    dest: "/etc/init.d/{{ bridge_prefix }}-monitor"
+    owner: root
+    mode: 755
+
+- name: "Enable the service"
+  service:
+    name: "{{ bridge_prefix }}-monitor"
+    state: started
+    enabled: yes
+    use: service
+
+- name: Start the service
+  shell: service {{ bridge_prefix }}-monitor start
