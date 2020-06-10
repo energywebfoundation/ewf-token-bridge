@@ -24,6 +24,7 @@ server {
     proxy_pass http://gasprice_home:8000/;
   }
 }
+{% if bridge_already_installed | default(false) == true %}
 server {
   listen 443 ssl;
   ssl_certificate /etc/nginx/conf.d/nginx.crt;
@@ -77,4 +78,5 @@ server {
     proxy_pass http://monitor.dai-bridge-common-network:3011/;
   }
 }
+{% endif %}
 {% endif %}

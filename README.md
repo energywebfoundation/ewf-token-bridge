@@ -8,6 +8,7 @@ Installation tutorial step by step
 - [EWF Token Bridge](#ewf-token-bridge)
   - [Table of Content](#table-of-content)
   - [Required software on local machine](#required-software-on-local-machine)
+  - [Additional requirements](#additional-requirements)
   - [AWS Instance preparation](#aws-instance-preparation)
     - [AWS EC2](#aws-ec2)
     - [Volumes preparation](#volumes-preparation)
@@ -18,13 +19,32 @@ Installation tutorial step by step
       - [Variables file (cs)](#variables-file-cs)
       - [Hosts file (cs)](#hosts-file-cs)
     - [Ansible run (cs)](#ansible-run-cs)
-    - [RPC logs - check in](#rpc-logs---check-in)
+    - [RPC logs - check in (cs)](#rpc-logs---check-in-cs)
+  - [Ansible ewc bridge stack (ebs)](#ansible-ewc-bridge-stack-ebs)
+    - [Ansible configuration (ebs)](#ansible-configuration-ebs)
+      - [Variables file (ebs)](#variables-file-ebs)
+      - [Hosts file (ebs)](#hosts-file-ebs)
+    - [Ansible run (ebs)](#ansible-run-ebs)
+  - [Common Stack final run](#common-stack-final-run)
+  - [Proxy certificate adjustment](#proxy-certificate-adjustment)
 
 <!-- /TOC -->
 ## Required software on local machine
 
 - git
 - ansible
+
+## Additional requirements
+
+- Prepared validator address and validator private key for bridge
+- static public IP Address
+- domains pointed to machine public IP
+  - domain for common resources: rpc, gasprice services. This domain isn't included in configuration files
+  - domain for main bridge
+  - domain for main bridge monitor (optional)
+  - domain for dai brige (optional)
+  - domain for dai bridge monitor (optional)
+- CloudFlare as certificate provider or trusted ssl certificate for bridge components domain
 
 ## AWS Instance preparation
 
@@ -104,7 +124,7 @@ nvme3n1     259:3    0   60G  0 disk
 └─nvme3n1p1 259:4    0   60G  0 part /                           c03b791b-60ef-4ae1-82b5-5c9ab6b4d08f
 ```
 
-## AWS Instance required configuration 
+## AWS Instance required configuration
 
 ### Prepare directories for blockchain data
 
@@ -119,14 +139,18 @@ sudo chown ubuntu:ubuntu /parity-ewc
 
 In this part we are going to install basic dependencies & common resources stack on our bridge instance.
 This stack contains required RPC which should be fully synced before we can continue bridge installation.
-All files related to this part are located in the `ansible-common-stack` and `resources-docker-stack` directories
+All files related to this part are located in the `ansible-common-stack` directory.
 
 ### Ansible configuration (cs)
 
 #### Variables file (cs)
 
 Configuration file location: `/ansible-common-stack/group_vars/ewc_bridge.yml`
-In this file more advanced users can adjust bridge and rpc data location if needed or overwrite every value used inside stack
+
+Open that file with your favourite editor and adjust most important variables:
+
+- `bridge_main_domain`
+- `bridge_main_monitor_domain` or switch `bridge_main_monitor_expose` to `false`
 
 #### Hosts file (cs)
 
@@ -145,7 +169,7 @@ ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
 
 **Now we wait till RPC will be fully synced**
 
-### RPC logs - check in
+### RPC logs - check in (cs)
 
 For convenience we have prepared possibility to verify RPC status with ansible command as well
 
@@ -157,3 +181,93 @@ Now we can again run ansible command but instead of installation proccess we sho
 ```bash
 ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
 ```
+
+## Ansible ewc bridge stack (ebs)
+
+**Warning: Before starting bridge installation you should be sure that our rpc's are fully synced and below services are accessible**
+
+Services list:
+
+- foreign gasprice    -> Example address: https://bridge-common.energyweb.org/foreign_gasprice
+- home gasprice       -> Example address: https://bridge-common.energyweb.org/foreign_gasprice
+- foreign rpc         -> Example address: https://bridge-common.energyweb.org/foreign_rpc
+- home rpc            -> Example address: https://bridge-common.energyweb.org/home_rpc
+
+In this part we are going to setup & install all necessary bridge components.
+
+All files related to this part are located in the `ansible-ewc-bridge` directory
+
+### Ansible configuration (ebs)
+
+#### Variables file (ebs)
+
+Configuration file location: `/ansible-ewc-bridge/group_vars/ewc_mainnet_native.yml`
+
+Open that file with your favourite editor, find and adjust these variables:
+
+- `ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY` - The private key of the bridge validator used to sign confirmations before sending transactions to the bridge contracts. The validator account is calculated automatically from the private key. Every bridge instance (set of watchers and senders) must have its own unique private key. The specified private key is used to sign transactions on both sides of the bridge. Value type: hexidecimal without "0x"
+- `ORACLE_VALIDATOR_ADDRESS` - The public address of the bridge validator. Value type: hexidecimal with "0x"
+- `COMMON_HOME_RPC_URL` - Home RPC address
+- `COMMON_FOREIGN_RPC_URL` - Foreign RPC address
+- `COMMON_HOME_GAS_PRICE_SUPPLIER_URL` - Home Gasprice service
+- `COMMON_FOREIGN_GAS_PRICE_SUPPLIER_URL` - Foreign Gasprice service
+
+**Warning: Do not share adjusted configuration with anybody, especially validator private key**
+
+#### Hosts file (ebs)
+
+To work with ansible we have to prepare inventory file where we will keep all hosts where we would like to run our playbooks.
+You can simply copy example file: `cp ansible-ewc-bridge/hosts.yml.example ansible-ewc-bridge/hosts-ewc.yml` and replace IP with new one associated with your AWS instance where you already installed common resources.
+
+### Ansible run (ebs)
+
+Now when everything has been prepared we can open terminal and run ansible playbooks directly from `ansible-ewc-bridge` directory.
+Additionally we provide `--private-key` flag with value to the location where we keep key for ssh connection with that instance. Remember to replace it with your own key path.
+
+Simply run below command and watch output:
+```bash
+ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
+```
+
+If the whole proccess went fine, we should get output from ansible similar to this one:
+
+```bash
+PLAY RECAP *****************************************************************************************************
+
+33.123.33.232               : ok=54   changed=30   unreachable=0    failed=0    skipped=6    rescued=0    ignored=2
+```
+
+## Common Stack final run
+
+First time when we run common stack resources they provided proxy only for services common services. Nowe we are going to run again same scripts but with proxy for bridge ui.
+
+Configuration file location: `/ansible-common-stack/group_vars/ewc_bridge.yml`
+
+Now open configuration file again and switch value for  `bridge_already_installed` from `false` to `true`
+
+Run ansible the same way like it was described here:
+[Ansible run (cs)](#ansible-run-cs)
+
+After this step our bridge site should be available under domain provided in configuration `bridge_main_domain`.
+Important is fact if you do not use cloudflare with provided certificates then our browser will see untrusted self generated certs, what cause for example Chrome to deny such connections. We can add exception or replace certs with ours.
+
+In some cases it is require to restart Nginx, for that purpose connect through ssh to the instance, go to the common resources directory (default:`/bridge-data/resources-docker-stack`) and run:
+
+`docker-compose up -d --force-recreate nginx`
+
+## Proxy certificate adjustment
+
+Ansible scripts generate self signed untrusted certificates just to run over ssl. If we do not use CloudFlare on top of it then it is required to replace that certificates with trusted version for our domain.
+
+Certificates default location:
+
+```
+/bridge-data/resources-docker-stack/nginx/nginx.crt
+/bridge-data/resources-docker-stack/nginx/nginx.key
+```
+
+After replacing files restart nginx proxy.For that purpose go to the common resources directory (default:`/bridge-data/resources-docker-stack`) and run:
+
+`docker-compose up -d --force-recreate nginx`
+
+If you feel comfortable with docker and nginx configuration then you can manually adjust whole configuration to fit your needs.

@@ -23,3 +23,7 @@ bridge_main_monitor_domain: bridge-monitor.example.com
 
 # This one will run all docker resources like nginx proxy and gasprice services
 start_all_resources: true
+
+# This variable is requied to prevent ansible from templating full nginx configuration - we will have only common services available 
+# Basically nginx will not start properly if any endpoint does not respond - during initial installation we do not have bridge services available yet
+bridge_already_installed: false
