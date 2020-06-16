@@ -39,7 +39,7 @@ Installation tutorial step by step
 - Prepared validator address and validator private key for bridge
 - static public IP Address
 - domains pointed to machine public IP
-  - domain for common resources: rpc, gasprice services. This domain isn't included in configuration files
+  - domain for common resources: rpc, gasprice services. This domain isn't included in the configuration files
   - domain for main bridge
   - domain for main bridge monitor (optional)
   - domain for dai brige (optional)
