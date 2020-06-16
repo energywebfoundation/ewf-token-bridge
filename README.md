@@ -239,7 +239,7 @@ PLAY RECAP *********************************************************************
 
 ## Common Stack final run
 
-First time when we run common stack resources they provided proxy only for services common services. Nowe we are going to run again same scripts but with proxy for bridge ui.
+When we run common stack resources first time, proxy was provided only for common services. Now we are going to run again same scripts but with proxy for bridge UI.
 
 Configuration file location: `/ansible-common-stack/group_vars/ewc_bridge.yml`
 
