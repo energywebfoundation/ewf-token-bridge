@@ -147,7 +147,7 @@ All files related to this part are located in the `ansible-common-stack` directo
 
 Configuration file location: `/ansible-common-stack/group_vars/ewc_bridge.yml`
 
-Open that file with your favourite editor and adjust most important variables:
+Open that file with your favourite editor to edit variables of interest:
 
 - `bridge_main_domain`
 - `bridge_main_monitor_domain` or switch `bridge_main_monitor_expose` to `false`
