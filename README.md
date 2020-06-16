@@ -266,7 +266,7 @@ Certificates default location:
 /bridge-data/resources-docker-stack/nginx/nginx.key
 ```
 
-After replacing files restart nginx proxy.For that purpose go to the common resources directory (default:`/bridge-data/resources-docker-stack`) and run:
+After replacing files, you should restart nginx proxy. Go to the common resources directory (default:`/bridge-data/resources-docker-stack`) and run:
 
 `docker-compose up -d --force-recreate nginx`
 
