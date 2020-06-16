@@ -138,7 +138,7 @@ sudo chown ubuntu:ubuntu /parity-ewc
 ## Ansible common stack (cs)
 
 In this part we are going to install basic dependencies & common resources stack on our bridge instance.
-This stack contains required RPC which should be fully synced before we can continue bridge installation.
+This stack contains a required blockchain node with RPC endpoint  which should be fully synced before we can continue the bridge installation.
 All files related to this part are located in the `ansible-common-stack` directory.
 
 ### Ansible configuration (cs)
