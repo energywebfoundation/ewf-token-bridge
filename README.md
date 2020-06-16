@@ -171,7 +171,7 @@ ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
 
 ### RPC logs - check in (cs)
 
-For convenience we have prepared possibility to verify RPC status with ansible command as well
+For convenience we have prepared the possibility to verify RPC status with ansible command as well:
 
 Edit variables file with your favourite editor: `ansible-common-stack/group_vars/ewc_bridge.yml`
 
