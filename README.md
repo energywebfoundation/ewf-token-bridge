@@ -167,7 +167,7 @@ Simply run below command and watch output:
 ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
 ```
 
-**Now we wait till RPC will be fully synced**
+**You have to wait for RPC to be fully synced**
 
 ### RPC logs - check in (cs)
 
