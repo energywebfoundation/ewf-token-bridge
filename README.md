@@ -257,7 +257,7 @@ In some cases it is required to restart Nginx. Connect through ssh into the inst
 
 ## Proxy certificate adjustment
 
-Ansible scripts generate self signed untrusted certificates just to run over ssl. If we do not use CloudFlare on top of it then it is required to replace that certificates with trusted version for our domain.
+Ansible scripts generate self signed untrusted certificates just to run over ssl. If you do not use CloudFlare on top of it then it is required to replace that certificates with trusted version for your domain.
 
 Certificates default location:
 
