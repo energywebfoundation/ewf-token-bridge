@@ -249,7 +249,7 @@ Run ansible the same way like it was described here:
 [Ansible run (cs)](#ansible-run-cs)
 
 After this step our bridge site should be available under domain provided in configuration `bridge_main_domain`.
-Important is fact if you do not use cloudflare with provided certificates then our browser will see untrusted self generated certs, what cause for example Chrome to deny such connections. We can add exception or replace certs with ours.
+It is important to note if you do not use Cloudflare with provided certificates, then our browser will see untrusted self generated certs, which might cause e.g. Chrome to deny such connections. You can add an exception or replace certs.
 
 In some cases it is require to restart Nginx, for that purpose connect through ssh to the instance, go to the common resources directory (default:`/bridge-data/resources-docker-stack`) and run:
 
