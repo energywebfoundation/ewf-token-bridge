@@ -1,15 +1,15 @@
 version: '2.4'
 services:
   parity_mainnet:
-    image: parity/parity:v2.5.13-stable
+    image: parity/parity:v2.7.2-stable
     command:
       - "--no-download"
       - "--mode=active"
       - "--auto-update=none"
       - "--base-path=/data"
-      - "--no-hardware-wallets"
       - "--port=30303"
-      - "--max-peers=25"
+      - "--min-peers=16"
+      - "--max-peers=50"
       - "--max-pending-peers=10"
       - "--jsonrpc-allow-missing-blocks"
       - "--jsonrpc-no-keep-alive"
@@ -31,6 +31,7 @@ services:
       - "--db-compaction=ssd"
       - "--cache-size=2048"
       - "--no-periodic-snapshot"
+      - "--no-warp"
     volumes:
       - type: bind
         source: {{ ethereum_parity_data_location }}
@@ -53,10 +54,9 @@ services:
       - "--mode=active"
       - "--auto-update=none"
       - "--base-path=/data"
-      - "--no-hardware-wallets"
       - "--port=30303"
       - "--min-peers=16"
-      - "--max-peers=24"
+      - "--max-peers=50"
       - "--max-pending-peers=32"
       - "--jsonrpc-allow-missing-blocks"
       - "--jsonrpc-no-keep-alive"
