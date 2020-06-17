@@ -128,12 +128,15 @@ nvme3n1     259:3    0   60G  0 disk
 
 ### Prepare directories for blockchain data
 
-```bash
-sudo chown ubuntu:ubuntu /bridge-data
-sudo chown ubuntu:ubuntu /parity-main
-sudo chown ubuntu:ubuntu /parity-ewc
+1. Open terminal
+1. Connect via SSH to your instance
+1. Run bellow commands
 
-```
+    ```bash
+    sudo chown ubuntu:ubuntu /bridge-data
+    sudo chown ubuntu:ubuntu /parity-main
+    sudo chown ubuntu:ubuntu /parity-ewc
+    ```
 
 ## Ansible common stack (cs)
 
@@ -147,25 +150,29 @@ All files related to this part are located in the `ansible-common-stack` directo
 
 Configuration file location: `/ansible-common-stack/group_vars/ewc_bridge.yml`
 
-Open that file with your favourite editor to edit variables of interest:
+1. Open that file with your favourite editor to edit variables of interest:
 
-- `bridge_main_domain`
-- `bridge_main_monitor_domain` or switch `bridge_main_monitor_expose` to `false`
+    - `bridge_main_domain`
+    - `bridge_main_monitor_domain` or switch `bridge_main_monitor_expose` to `false`
 
 #### Hosts file (cs)
 
-To work with ansible we have to prepare inventory file where we will keep all hosts where we would like to run our playbooks
-You can simply copy example file: `cp ansible-common-stack/hosts.yml.example ansible-common-stack/hosts-ewc.yml` and IP with new one associated with your AWS instance. This is necessary for ansible to make a ssh connection and run all commands.
+To work with ansible we have to prepare inventory file where we will keep all hosts where we would like to run our playbooks.
+
+1. Copy example file: `cp ansible-common-stack/hosts.yml.example ansible-common-stack/hosts-ewc.yml`
+1. Replace example IP with new one associated with your AWS instance. This is necessary for ansible to make a ssh connection and run all commands.
 
 ### Ansible run (cs)
 
-Now when everything has been prepared we can open terminal and run ansible playbooks directly from `ansible-common-stack` directory.
-Additionally we provide `--private-key` flag with value to the location where we keep key for ssh connection with that instance. Remember to replace it with your own key path.
+Now when everything has been prepared follow below steps
 
-Simply run below command and watch output:
-```bash
-ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
-```
+1. Open terminal
+1. Go to the common stack directory: `ansible-common-stack`
+1. Run ansible playbooks. Remember to provide `--private-key` flag with value to the location where we keep key for ssh connection with that instance.
+
+    ```bash
+    ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
+    ```
 
 **You have to wait for RPC to be fully synced**
 
@@ -173,14 +180,15 @@ ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
 
 For convenience we have prepared the possibility to verify RPC status with ansible command as well:
 
-Edit variables file with your favourite editor: `ansible-common-stack/group_vars/ewc_bridge.yml`
+1. Edit variables file with your favourite editor: `ansible-common-stack/group_vars/ewc_bridge.yml`
 
-Uncomment this line `check_rpc_status_only: true` and save file.
+1. Uncomment this line `check_rpc_status_only: true` and save file.
 
-Now we can again run ansible command but instead of installation proccess we should see parity logs with sync status
-```bash
-ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
-```
+1. Run ansible command but instead of installation proccess we should see parity logs with sync status
+
+    ```bash
+    ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
+    ```
 
 ## Ansible ewc bridge stack (ebs)
 
@@ -193,7 +201,7 @@ Services list:
 - foreign rpc         -> Example address: https://bridge-common.energyweb.org/foreign_rpc
 - home rpc            -> Example address: https://bridge-common.energyweb.org/home_rpc
 
-In this part we are going to setup & install all necessary bridge components.
+In this part you are going to setup & install all necessary bridge components.
 
 All files related to this part are located in the `ansible-ewc-bridge` directory
 
@@ -203,50 +211,51 @@ All files related to this part are located in the `ansible-ewc-bridge` directory
 
 Configuration file location: `/ansible-ewc-bridge/group_vars/ewc_mainnet_native.yml`
 
-Open that file with your favourite editor, find and adjust these variables:
+1. Open that file with your favourite editor, find and adjust these variables:
 
-- `ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY` - The private key of the bridge validator used to sign confirmations before sending transactions to the bridge contracts. The validator account is calculated automatically from the private key. Every bridge instance (set of watchers and senders) must have its own unique private key. The specified private key is used to sign transactions on both sides of the bridge. Value type: hexidecimal without "0x"
-- `ORACLE_VALIDATOR_ADDRESS` - The public address of the bridge validator. Value type: hexidecimal with "0x"
-- `COMMON_HOME_RPC_URL` - Home RPC address
-- `COMMON_FOREIGN_RPC_URL` - Foreign RPC address
-- `COMMON_HOME_GAS_PRICE_SUPPLIER_URL` - Home Gasprice service
-- `COMMON_FOREIGN_GAS_PRICE_SUPPLIER_URL` - Foreign Gasprice service
+    - `ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY` - The private key of the bridge validator used to sign confirmations before sending transactions to the bridge contracts. The validator account is calculated automatically from the private key. Every bridge instance (set of watchers and senders) must have its own unique private key. The specified private key is used to sign transactions on both sides of the bridge. Value type: hexidecimal without "0x"
+    - `ORACLE_VALIDATOR_ADDRESS` - The public address of the bridge validator. Value type: hexidecimal with "0x"
+    - `COMMON_HOME_RPC_URL` - Home RPC address
+    - `COMMON_FOREIGN_RPC_URL` - Foreign RPC address
+    - `COMMON_HOME_GAS_PRICE_SUPPLIER_URL` - Home Gasprice service
+    - `COMMON_FOREIGN_GAS_PRICE_SUPPLIER_URL` - Foreign Gasprice service
 
 **Warning: Do not share adjusted configuration with anybody, especially validator private key**
 
 #### Hosts file (ebs)
 
-To work with ansible we have to prepare inventory file where we will keep all hosts where we would like to run our playbooks.
-You can simply copy example file: `cp ansible-ewc-bridge/hosts.yml.example ansible-ewc-bridge/hosts-ewc.yml` and replace IP with new one associated with your AWS instance where you already installed common resources.
+To work with ansible you have to prepare inventory file where we will keep all hosts where we would like to run our playbooks.
+
+1. Copy example file: `cp ansible-ewc-bridge/hosts.yml.example ansible-ewc-bridge/hosts-ewc.yml`
+1. Replace IP with new one associated with your AWS instance where you already installed common resources.
 
 ### Ansible run (ebs)
 
-Now when everything has been prepared we can open terminal and run ansible playbooks directly from `ansible-ewc-bridge` directory.
-Additionally we provide `--private-key` flag with value to the location where we keep key for ssh connection with that instance. Remember to replace it with your own key path.
+1. Open terminal
+1. Go to the `ansible-ewc-bridge` directory
+1. Run ansible playbooks with below command and watch output. Remember to provide `--private-key` flag with value to the location where we keep key for ssh connection with that instance.
 
-Simply run below command and watch output:
-```bash
-ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
-```
+    ```bash
+    ansible-playbook -i hosts-ewc.yml site.yml --private-key=~/.ssh/id_rsa
+    ```
 
-If the whole proccess went fine, we should get output from ansible similar to this one:
+1. Check output - If the whole proccess went fine, we should get output from ansible similar to this one:
 
-```bash
-PLAY RECAP *****************************************************************************************************
+    ```bash
+    PLAY RECAP *****************************************************************************************************
 
-33.123.33.232               : ok=54   changed=30   unreachable=0    failed=0    skipped=6    rescued=0    ignored=2
-```
+    33.123.33.232               : ok=54   changed=30   unreachable=0    failed=0    skipped=6    rescued=0    ignored=2
+    ```
 
 ## Common Stack final run
 
-When we run common stack resources first time, proxy was provided only for common services. Now we are going to run again same scripts but with proxy for bridge UI.
+When you run common stack resources first time, proxy was provided only for common services. Now you are going to run again same scripts but with proxy for bridge UI.
 
 Configuration file location: `/ansible-common-stack/group_vars/ewc_bridge.yml`
 
-Now open configuration file again and switch value for  `bridge_already_installed` from `false` to `true`
-
-Run ansible the same way like it was described here:
-[Ansible run (cs)](#ansible-run-cs)
+1. Open configuration file
+1. Switch value for  `bridge_already_installed` from `false` to `true`
+1. Run ansible the same way like it was described here: [Ansible run (cs)](#ansible-run-cs)
 
 After this step our bridge site should be available under domain provided in configuration `bridge_main_domain`.
 It is important to note if you do not use Cloudflare with provided certificates, then our browser will see untrusted self generated certs, which might cause e.g. Chrome to deny such connections. You can add an exception or replace certs.
