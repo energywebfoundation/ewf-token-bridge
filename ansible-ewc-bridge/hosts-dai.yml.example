@@ -1,0 +1,15 @@
+---
+ewc_mainnet_dai:
+  children:
+    oracle:
+      hosts:
+        50.18.12.236:
+          ansible_user: ubuntu
+    ui:
+      hosts:
+        50.18.12.236:
+          ansible_user: ubuntu
+    monitor:
+      hosts:
+        50.18.12.236:
+          ansible_user: ubuntu
