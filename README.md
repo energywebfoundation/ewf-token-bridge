@@ -25,6 +25,11 @@ Installation tutorial step by step
       - [Variables file (ebs)](#variables-file-ebs)
       - [Hosts file (ebs)](#hosts-file-ebs)
     - [Ansible run (ebs)](#ansible-run-ebs)
+  - [Ansible dai bridge stack (dbs)](#ansible-dai-bridge-stack-dbs)
+    - [Ansible configuration (dbs)](#ansible-configuration-dbs)
+      - [Variables file (dbs)](#variables-file-dbs)
+      - [Hosts file (dbs)](#hosts-file-dbs)
+    - [Ansible run (dbs)](#ansible-run-dbs)
   - [Common Stack final run](#common-stack-final-run)
   - [Proxy certificate adjustment](#proxy-certificate-adjustment)
 
@@ -154,6 +159,8 @@ Configuration file location: `/ansible-common-stack/group_vars/ewc_bridge.yml`
 
     - `bridge_main_domain`
     - `bridge_main_monitor_domain` or switch `bridge_main_monitor_expose` to `false`
+    - `bridge_dai_domain_enable` switch to `true` if you plan to install dai brige too
+    - `bridge_dai_domain` (optional)
 
 #### Hosts file (cs)
 
@@ -247,6 +254,66 @@ To work with ansible you have to prepare inventory file where we will keep all h
     33.123.33.232               : ok=54   changed=30   unreachable=0    failed=0    skipped=6    rescued=0    ignored=2
     ```
 
+## Ansible dai bridge stack (dbs)
+
+**Warning: This is optional section who decided to host DAI Bridge**
+
+**Warning: Before starting bridge installation you should be sure that our rpc's are fully synced and below services are accessible**
+
+
+Services list:
+
+- foreign gasprice    -> Example address: https://bridge-common.energyweb.org/foreign_gasprice
+- home gasprice       -> Example address: https://bridge-common.energyweb.org/foreign_gasprice
+- foreign rpc         -> Example address: https://bridge-common.energyweb.org/foreign_rpc
+- home rpc            -> Example address: https://bridge-common.energyweb.org/home_rpc
+
+In this part you are going to setup & install all necessary bridge components with configuration dedicated for DAI Bridge.
+
+All files related to this part are located in the `ansible-ewc-bridge` directory
+
+### Ansible configuration (dbs)
+
+#### Variables file (dbs)
+
+Configuration file location: `/ansible-ewc-bridge/group_vars/ewc_mainnet_dai.yml`
+
+1. Open that file with your favourite editor, find and adjust these variables:
+
+    - `ORACLE_VALIDATOR_ADDRESS_PRIVATE_KEY` - The private key of the bridge validator used to sign confirmations before sending transactions to the bridge contracts. The validator account is calculated automatically from the private key. Every bridge instance (set of watchers and senders) must have its own unique private key. The specified private key is used to sign transactions on both sides of the bridge. Value type: hexidecimal without "0x"
+    - `ORACLE_VALIDATOR_ADDRESS` - The public address of the bridge validator. Value type: hexidecimal with "0x"
+    - `COMMON_HOME_RPC_URL` - Home RPC address
+    - `COMMON_FOREIGN_RPC_URL` - Foreign RPC address
+    - `COMMON_HOME_GAS_PRICE_SUPPLIER_URL` - Home Gasprice service
+    - `COMMON_FOREIGN_GAS_PRICE_SUPPLIER_URL` - Foreign Gasprice service
+
+**Warning: Do not share adjusted configuration with anybody, especially validator private key**
+
+#### Hosts file (dbs)
+
+To work with ansible you have to prepare inventory file where we will keep all hosts where we would like to run our playbooks.
+
+1. Copy example file: `cp ansible-ewc-bridge/hosts-dai.yml.example ansible-ewc-bridge/hosts-dai.yml`
+1. Replace IP with new one associated with your AWS instance where you already installed common resources.
+
+### Ansible run (dbs)
+
+1. Open terminal
+1. Go to the `ansible-ewc-bridge` directory
+1. Run ansible playbooks with below command and watch output. Remember to provide `--private-key` flag with value to the location where we keep key for ssh connection with that instance.
+
+    ```bash
+    ansible-playbook -i hosts-dai.yml site.yml --private-key=~/.ssh/id_rsa
+    ```
+
+1. Check output - If the whole proccess went fine, we should get output from ansible similar to this one:
+
+    ```bash
+    PLAY RECAP *****************************************************************************************************
+
+    33.123.33.232               : ok=54   changed=30   unreachable=0    failed=0    skipped=6    rescued=0    ignored=2
+    ```
+
 ## Common Stack final run
 
 When you run common stack resources first time, proxy was provided only for common services. Now you are going to run again same scripts but with proxy for bridge UI.
@@ -257,7 +324,8 @@ Configuration file location: `/ansible-common-stack/group_vars/ewc_bridge.yml`
 1. Switch value for  `bridge_already_installed` from `false` to `true`
 1. Run ansible the same way like it was described here: [Ansible run (cs)](#ansible-run-cs)
 
-After this step our bridge site should be available under domain provided in configuration `bridge_main_domain`.
+After this step our bridge site should be available under domain provided in configuration `bridge_main_domain` and `bridge_dai_domain` if you decided to configure and install DAI Bridge too.
+
 It is important to note if you do not use Cloudflare with provided certificates, then our browser will see untrusted self generated certs, which might cause e.g. Chrome to deny such connections. You can add an exception or replace certs.
 
 In some cases it is required to restart Nginx. Connect through ssh into the instance, go to the common resources directory (default:`/bridge-data/resources-docker-stack`) and run:
