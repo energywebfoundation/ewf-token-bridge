@@ -256,7 +256,7 @@ To work with ansible you have to prepare inventory file where we will keep all h
 
 ## Ansible dai bridge stack (dbs)
 
-**Warning: This is optional section who decided to host DAI Bridge**
+**Warning: This is optional section for those who decided to host DAI Bridge**
 
 **Warning: Before starting bridge installation you should be sure that our rpc's are fully synced and below services are accessible**
 
