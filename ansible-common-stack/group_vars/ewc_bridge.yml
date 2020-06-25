@@ -18,6 +18,9 @@ bridge_dai_domain: bridge-dai.example.com
 bridge_main_monitor_expose: true
 bridge_main_monitor_domain: bridge-monitor.example.com
 
+bridge_dai_monitor_expose: false
+bridge_dai_monitor_domain: bridge-dai-monitor.example.com
+
 # Uncomment to check only rpc status instead of instaling anything
 # check_rpc_status_only: true
 

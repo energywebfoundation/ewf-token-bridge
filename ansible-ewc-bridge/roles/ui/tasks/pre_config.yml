@@ -3,3 +3,9 @@
   template:
     src: .env.j2
     dest: "{{ bridge_path }}/ui/.env"
+
+- name: Copy docker-compose file
+  copy:
+    src: files/docker-compose.yml
+    dest: "{{ bridge_path }}/ui/docker-compose.yml"
+    mode: '0755'

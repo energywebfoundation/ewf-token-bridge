@@ -17,5 +17,5 @@ bridge_main_monitor_expose: false
 bridge_main_monitor_domain: bridge-monitor.example.com
 bridge_dai_domain_enable: false
 bridge_dai_domain: bridge-dai.example.com
-bridge_main_dai_monitor_expose: false
+bridge_dai_monitor_expose: false
 bridge_dai_monitor_domain: bridge-dai-monitor.example.com

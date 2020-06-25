@@ -65,7 +65,7 @@ server {
   }
 }
 {% endif %}
-{% if bridge_main_dai_monitor_expose | default(false) == true %}
+{% if bridge_dai_monitor_expose | default(false) == true %}
 server {
   listen 443 ssl;
   ssl_certificate /etc/nginx/conf.d/nginx.crt;
