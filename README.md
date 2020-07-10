@@ -2,6 +2,8 @@
 
 Installation tutorial step by step
 
+**Primary maintainer**: Kamil Rosenberger @Berger91
+
 ## Table of Content
 <!-- TOC -->
 
@@ -348,3 +350,7 @@ After replacing files, you should restart nginx proxy. Go to the common resource
 `docker-compose up -d --force-recreate nginx`
 
 If you feel comfortable with docker and nginx configuration then you can manually adjust whole configuration to fit your needs.
+
+## License
+
+[GPL-3.0](./LICENSE)
