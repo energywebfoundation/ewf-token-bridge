@@ -67,7 +67,7 @@ m5.xlarge
 
 ```txt
 /bridge-data - 100 GB
-/parity-main - 500 GB
+/parity-main - 600 GB
 /parity-ewc - 300 GB
 / - 60 GB
 ```
