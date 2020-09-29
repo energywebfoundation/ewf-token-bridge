@@ -52,7 +52,8 @@ Installation tutorial step by step
   - domain for dai brige (optional)
   - domain for dai bridge monitor (optional)
 - CloudFlare as certificate provider or trusted ssl certificate for bridge components domain
-
+- Installed python +2.7.17 on your instance
+ 
 ## AWS Instance preparation
 
 ### AWS EC2
