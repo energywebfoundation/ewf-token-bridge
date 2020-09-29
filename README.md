@@ -207,7 +207,7 @@ For convenience we have prepared the possibility to verify RPC status with ansib
 Services list:
 
 - foreign gasprice    -> Example address: https://bridge-common.energyweb.org/foreign_gasprice
-- home gasprice       -> Example address: https://bridge-common.energyweb.org/foreign_gasprice
+- home gasprice       -> Example address: https://bridge-common.energyweb.org/home_gasprice
 - foreign rpc         -> Example address: https://bridge-common.energyweb.org/foreign_rpc
 - home rpc            -> Example address: https://bridge-common.energyweb.org/home_rpc
 
