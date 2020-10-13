@@ -52,7 +52,8 @@ Installation tutorial step by step
   - domain for dai brige (optional)
   - domain for dai bridge monitor (optional)
 - CloudFlare as certificate provider or trusted ssl certificate for bridge components domain
-
+- Installed python +2.7.17 on your instance
+ 
 ## AWS Instance preparation
 
 ### AWS EC2
@@ -206,7 +207,7 @@ For convenience we have prepared the possibility to verify RPC status with ansib
 Services list:
 
 - foreign gasprice    -> Example address: https://bridge-common.energyweb.org/foreign_gasprice
-- home gasprice       -> Example address: https://bridge-common.energyweb.org/foreign_gasprice
+- home gasprice       -> Example address: https://bridge-common.energyweb.org/home_gasprice
 - foreign rpc         -> Example address: https://bridge-common.energyweb.org/foreign_rpc
 - home rpc            -> Example address: https://bridge-common.energyweb.org/home_rpc
 
